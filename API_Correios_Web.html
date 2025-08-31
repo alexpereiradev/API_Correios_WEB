@@ -54,64 +54,64 @@
 
 <!-- JavaScript: interatividade e requisições -->
 <script>
-function mostrarCampos() {
-    const opcao = document.getElementById('opcao').value;
-    document.getElementById('campoCep').style.display = opcao === 'cep' ? 'block' : 'none';
-    document.getElementById('campoEndereco').style.display = opcao === 'endereco' ? 'block' : 'none';
-}
+    function mostrarCampos() {
+        const opcao = document.getElementById('opcao').value;
+        document.getElementById('campoCep').style.display = opcao === 'cep' ? 'block' : 'none';
+        document.getElementById('campoEndereco').style.display = opcao === 'endereco' ? 'block' : 'none';
+    }
 
-function consultar() {
-    const opcao = document.getElementById('opcao').value;
-    const tabela = document.getElementById('resultadoTabela');
-    const tbody = document.getElementById('resultadoBody');
-    tbody.innerHTML = ''; // limpa resultados anteriores
-    tabela.style.display = 'none';
+    function consultar() {
+        const opcao = document.getElementById('opcao').value;
+        const tabela = document.getElementById('resultadoTabela');
+        const tbody = document.getElementById('resultadoBody');
+        tbody.innerHTML = ''; // limpa resultados anteriores
+        tabela.style.display = 'none';
 
-    if (opcao === 'cep') {
-        const cep = document.getElementById('cepInput').value.replace(/\D/g, '');
-        if (cep.length !== 8) {
-            alert("CEP inválido: deve conter 8 números");
-            return;
-        }
-        fetch(`https://viacep.com.br/ws/${cep}/json/`)
-            .then(r => r.json())
-            .then(dados => {
-                if (dados.erro) { alert("CEP não encontrado"); return; }
-                tabela.style.display = 'table';
-                const row = document.createElement('tr');
-                [dados.cep, dados.logradouro, dados.complemento, dados.bairro, dados.localidade, dados.uf].forEach(v => {
-                    const cell = document.createElement('td');
-                    cell.textContent = v || '';
-                    row.appendChild(cell);
-                });
-                tbody.appendChild(row);
-            })
-            .catch(e => alert("Erro na consulta: " + e));
-    } else if (opcao === 'endereco') {
-        const endereco = document.getElementById('enderecoInput').value.trim();
-        const cidade = document.getElementById('cidadeInput').value.trim();
-        const uf = document.getElementById('ufInput').value.trim().toUpperCase();
-        if (!endereco || !cidade || !uf) { alert("Preencha todos os campos"); return; }
-
-        fetch(`https://viacep.com.br/ws/${uf}/${cidade}/${endereco}/json/`)
-            .then(r => r.json())
-            .then(dados => {
-                if (!Array.isArray(dados) || dados.length === 0) { alert("Endereço não encontrado"); return; }
-                tabela.style.display = 'table';
-                dados.forEach(item => {
+        if (opcao === 'cep') {
+            const cep = document.getElementById('cepInput').value.replace(/\D/g, '');
+            if (cep.length !== 8) {
+                alert("CEP inválido: deve conter 8 números");
+                return;
+            }
+            fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                .then(r => r.json())
+                .then(dados => {
+                    if (dados.erro) { alert("CEP não encontrado"); return; }
+                    tabela.style.display = 'table';
                     const row = document.createElement('tr');
-                    [item.cep, item.logradouro, item.complemento, item.bairro, item.localidade, item.uf].forEach(v => {
+                    [dados.cep, dados.logradouro, dados.complemento, dados.bairro, dados.localidade, dados.uf].forEach(v => {
                         const cell = document.createElement('td');
                         cell.textContent = v || '';
                         row.appendChild(cell);
                     });
                     tbody.appendChild(row);
-                });
-            })
-            .catch(e => alert("Erro na consulta: " + e));
+                })
+                .catch(e => alert("Erro na consulta: " + e));
+        } else if (opcao === 'endereco') {
+            const endereco = document.getElementById('enderecoInput').value.trim();
+            const cidade = document.getElementById('cidadeInput').value.trim();
+            const uf = document.getElementById('ufInput').value.trim().toUpperCase();
+            if (!endereco || !cidade || !uf) { alert("Preencha todos os campos"); return; }
+
+            fetch(`https://viacep.com.br/ws/${uf}/${cidade}/${endereco}/json/`)
+                .then(r => r.json())
+                .then(dados => {
+                    if (!Array.isArray(dados) || dados.length === 0) { alert("Endereço não encontrado"); return; }
+                    tabela.style.display = 'table';
+                    dados.forEach(item => {
+                        const row = document.createElement('tr');
+                        [item.cep, item.logradouro, item.complemento, item.bairro, item.localidade, item.uf].forEach(v => {
+                            const cell = document.createElement('td');
+                            cell.textContent = v || '';
+                            row.appendChild(cell);
+                        });
+                        tbody.appendChild(row);
+                    });
+                })
+                .catch(e => alert("Erro na consulta: " + e));
+        }
     }
-}
-</script>
+    </script>
 
 </body>
 </html>
